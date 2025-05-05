@@ -18,10 +18,11 @@ public class AuthController : ControllerBase
     
     private JwtHelper _jwtHelper;
 
-    public AuthController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    public AuthController(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, JwtHelper jwtHelper)
     {
         _userManager= userManager;
         _roleManager = roleManager;
+        _jwtHelper = jwtHelper;
     }
 
     [HttpPost("signup")]
@@ -31,6 +32,12 @@ public class AuthController : ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
+        }
+        
+        var oldUser = await _userManager.FindByEmailAsync(userRegisterDto.Email);
+        if (oldUser != null)
+        {
+            return BadRequest("User already exists");
         }
 
         var user = new User
@@ -93,7 +100,13 @@ public class AuthController : ControllerBase
 
 
         String returnToken = new JwtSecurityTokenHandler().WriteToken(token);
-        return Ok(returnToken);
+        return   Ok(new
+        {
+            token = new JwtSecurityTokenHandler().WriteToken(token),
+            expiration = token.ValidTo
+        });
+        
+    ;
     }
 
 
