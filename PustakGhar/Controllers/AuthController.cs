@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AlishPustakGhar.Dtos;
 using AlishPustakGhar.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Model;
@@ -23,6 +24,14 @@ public class AuthController : ControllerBase
         _userManager= userManager;
         _roleManager = roleManager;
         _jwtHelper = jwtHelper;
+    }
+
+
+    [Authorize]
+    [HttpGet("private")]
+    public IActionResult Get()
+    {
+        return  Ok();
     }
 
     [HttpPost("signup")]
