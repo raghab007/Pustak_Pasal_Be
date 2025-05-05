@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WebApplication1.Model
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<Guid>
     {
         [Required]
         public string FirstName { get; set; }
@@ -18,10 +18,10 @@ namespace WebApplication1.Model
 
         public bool IsActive { get; set; }
         
-        [Required]
-        public String Email { get; set; }
         
         [Range(1,100,ErrorMessage ="Please enter a number between 1 and 100")]
         public int Age { get; set; }
+        
+        public string Address { get; set; }
     }
 }
