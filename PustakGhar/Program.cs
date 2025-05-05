@@ -1,3 +1,4 @@
+using AlishPustakGhar.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
@@ -8,14 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// JWT configuration
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+
 // Add DbContext with PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add ASP.NET Core Identity for user management
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentityCore<User>()
+    .AddRoles<IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+    
+
+// the scope may be change later to transient or scope
+builder.Services.AddSingleton<JwtHelper, JwtHelper>();
 
 // Configure Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
