@@ -28,10 +28,12 @@ public class AuthController : ControllerBase
 
 
     [Authorize]
-    [HttpGet("private")]
-    public IActionResult Get()
+    [HttpGet("me")]
+    public   IActionResult Get()
     {
-        return  Ok();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user =  _userManager.Users.FirstOrDefault(x => x.Id.ToString() == userId);
+        return Ok(user);
     }
 
     [HttpPost("signup")]
@@ -114,7 +116,6 @@ public class AuthController : ControllerBase
             token = new JwtSecurityTokenHandler().WriteToken(token),
             expiration = token.ValidTo
         });
-        
     ;
     }
 
