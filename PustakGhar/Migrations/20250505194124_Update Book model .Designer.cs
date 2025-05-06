@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApplication1.Data;
@@ -11,9 +12,11 @@ using WebApplication1.Data;
 namespace AlishPustakGhar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250505194124_Update Book model ")]
+    partial class UpdateBookmodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,9 +230,6 @@ namespace AlishPustakGhar.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsBestSeller")
                         .HasColumnType("boolean");
 
@@ -246,12 +246,12 @@ namespace AlishPustakGhar.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ReleaseStatus")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -260,8 +260,9 @@ namespace AlishPustakGhar.Migrations
                     b.Property<int>("TotalRating")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TotalReviews")
-                        .HasColumnType("integer");
+                    b.Property<string>("TotalReviews")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("TotalSold")
                         .HasColumnType("integer");
@@ -269,41 +270,6 @@ namespace AlishPustakGhar.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Book");
-                });
-
-            modelBuilder.Entity("WebApplication1.Model.BookGenre", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GenreId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("GenreId");
-
-                    b.ToTable("BookGenre");
-                });
-
-            modelBuilder.Entity("WebApplication1.Model.Genre", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("GenreType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Genre");
                 });
 
             modelBuilder.Entity("WebApplication1.Model.User", b =>
@@ -465,25 +431,6 @@ namespace AlishPustakGhar.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("WebApplication1.Model.BookGenre", b =>
-                {
-                    b.HasOne("WebApplication1.Model.Book", "Book")
-                        .WithMany("BookGenres")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApplication1.Model.Genre", "Genre")
-                        .WithMany("BookGenres")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Genre");
-                });
-
             modelBuilder.Entity("WebApplication1.Model.Author", b =>
                 {
                     b.Navigation("AuthorBooks");
@@ -492,13 +439,6 @@ namespace AlishPustakGhar.Migrations
             modelBuilder.Entity("WebApplication1.Model.Book", b =>
                 {
                     b.Navigation("AuthorBooks");
-
-                    b.Navigation("BookGenres");
-                });
-
-            modelBuilder.Entity("WebApplication1.Model.Genre", b =>
-                {
-                    b.Navigation("BookGenres");
                 });
 #pragma warning restore 612, 618
         }

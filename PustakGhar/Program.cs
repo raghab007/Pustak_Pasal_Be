@@ -1,4 +1,6 @@
 using System.Text;
+using AlishPustakGhar.Services;
+using AlishPustakGhar.Services.Interfaces;
 using AlishPustakGhar.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -41,11 +43,28 @@ builder.Services.AddIdentityCore<User>()
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+// Add CORS service
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // Replace with your frontend URL
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 //builder.Services.AddIdentityApiEndpoints<User>();
     
 
 // the scope may be change later to transient or scope
 builder.Services.AddSingleton<JwtHelper, JwtHelper>();
+
+builder.Services.AddScoped<IBookService, BookService>();
+
+builder.Services.AddSingleton<FileHelper, FileHelper>();
 
 // Configure Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
@@ -63,6 +82,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //app.MapIdentityApi<User>();
+
+
+app.UseCors("AllowSpecificOrigin");
+
 
 // Add authentication and authorization middleware
 app.UseAuthentication();

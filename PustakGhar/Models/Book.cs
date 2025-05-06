@@ -15,20 +15,22 @@ namespace WebApplication1.Model
         public DateTime PublishedDate { get; set; }
         
         public String Publisher { get; set; }
+        public string Description { get; set; }
         
         public int Price { get; set; }
         
-        public int Quantity { get; set; }
+        public int Stock { get; set; }
         
-        public string ImageURL { get; set; }
+        public bool IsAvailable { get; set; } = true;
+        
+        public string FrontImage { get; set; }
+        
+        public string BackImage { get; set; }
         
         public int TotalSold { get; set; }
         
-        public int TotalRating { get; set; }
         
-        public string Description { get; set; }
-        
-        public string TotalReviews { get; set; }
+        public int TotalReviews { get; set; }
         
         public string ReleaseStatus { get; set; }
 
@@ -41,6 +43,8 @@ namespace WebApplication1.Model
         public  DateTime DiscoundEndDate { get; set; }
         
         public virtual ICollection<AuthorBook> AuthorBooks { get; set; } = new List<AuthorBook>();
+        
+        public virtual ICollection<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
         
 
     }
