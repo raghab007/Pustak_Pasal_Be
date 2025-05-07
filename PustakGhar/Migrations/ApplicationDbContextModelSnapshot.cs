@@ -213,10 +213,10 @@ namespace AlishPustakGhar.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DiscoundEndDate")
+                    b.Property<DateTime?>("DiscoundEndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DiscoundStartDate")
+                    b.Property<DateTime?>("DiscoundStartDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FrontImage")
@@ -239,7 +239,7 @@ namespace AlishPustakGhar.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("PublishedDate")
+                    b.Property<DateTime?>("PublishedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Publisher")
@@ -256,9 +256,6 @@ namespace AlishPustakGhar.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("TotalRating")
-                        .HasColumnType("integer");
 
                     b.Property<int>("TotalReviews")
                         .HasColumnType("integer");

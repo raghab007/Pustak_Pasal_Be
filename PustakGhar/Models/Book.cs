@@ -12,7 +12,7 @@ namespace WebApplication1.Model
         public string Title { get; set; }
 
         public string ISBN { get; set; }
-        public DateTime PublishedDate { get; set; }
+        public DateTime? PublishedDate { get; set; }
         
         public String Publisher { get; set; }
         public string Description { get; set; }
@@ -38,9 +38,9 @@ namespace WebApplication1.Model
         
         public bool IsBestSeller { get; set; } = false;
         
-        public  DateTime DiscoundStartDate { get; set; }
+        public  DateTime? DiscoundStartDate { get; set; }
         
-        public  DateTime DiscoundEndDate { get; set; }
+        public  DateTime? DiscoundEndDate { get; set; }
         
         public virtual ICollection<AuthorBook> AuthorBooks { get; set; } = new List<AuthorBook>();
         

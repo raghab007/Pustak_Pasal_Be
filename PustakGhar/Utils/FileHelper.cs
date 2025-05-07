@@ -7,21 +7,24 @@ namespace AlishPustakGhar.Utils
 {
     public class FileHelper
     {
-        public  async Task<string> SaveFile(IFormFile file, string savingFolder)
-        {
-            // Get the path of the desktop folder
-            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string folderName = "PustakGhar";
+        private readonly string _rootFolderPath;
 
-            // Create main folder on the desktop if it doesn't exist
-            var rootFolderPath = Path.Combine(desktopPath, folderName);
-            if (!Directory.Exists(rootFolderPath))
+        public FileHelper()
+        {
+            // Initialize the root folder path once
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            _rootFolderPath = Path.Combine(desktopPath, "PustakGhar");
+        }
+
+        public async Task<string> SaveFile(IFormFile file, string savingFolder)
+        {
+            if (file == null || file.Length == 0)
             {
-                Directory.CreateDirectory(rootFolderPath);
+                throw new ArgumentException("File is empty or null");
             }
 
             // Create subfolder if it doesn't exist
-            var folderPath = Path.Combine(rootFolderPath, savingFolder);
+            var folderPath = Path.Combine(_rootFolderPath, savingFolder);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -41,6 +44,38 @@ namespace AlishPustakGhar.Utils
             await file.CopyToAsync(stream);
 
             return uniqueFileName;
+        }
+
+        public bool DeleteFile(string fileName, string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return false;
+            }
+
+            try
+            {
+                var filePath = Path.Combine(_rootFolderPath, folderName, fileName);
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                // Log error if needed
+                return false;
+            }
+        }
+
+        // Optional: Method to get full file path
+        public string GetFilePath(string fileName, string folderName)
+        {
+            return Path.Combine(_rootFolderPath, folderName, fileName);
         }
     }
 }

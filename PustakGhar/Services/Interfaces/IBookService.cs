@@ -9,7 +9,7 @@ public interface IBookService
     
     void DeleteBook(Guid id);
     
-    List<Book> GetAllBooks();
+    BookResponseDto GetPaginatedBooks(int page, int pageSize);
     
     
     

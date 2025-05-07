@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace AlishPustakGhar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250506151939_fix book  ")]
-    partial class fixbook
+    [Migration("20250506183456_update  book again  ")]
+    partial class updatebookagain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -216,10 +216,10 @@ namespace AlishPustakGhar.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DiscoundEndDate")
+                    b.Property<DateTime?>("DiscoundEndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DiscoundStartDate")
+                    b.Property<DateTime?>("DiscoundStartDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FrontImage")
@@ -242,7 +242,7 @@ namespace AlishPustakGhar.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("PublishedDate")
+                    b.Property<DateTime?>("PublishedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Publisher")
@@ -259,9 +259,6 @@ namespace AlishPustakGhar.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("TotalRating")
-                        .HasColumnType("integer");
 
                     b.Property<int>("TotalReviews")
                         .HasColumnType("integer");

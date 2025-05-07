@@ -1,4 +1,5 @@
 
+using System.Text.Json;
 using AlishPustakGhar.Dtos;
 using AlishPustakGhar.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +20,18 @@ public class BooksController: ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> AddBook([FromForm] BookAddDto bookAddDto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> AddBook([FromForm] BookAddDto bookAddDto  )
     {
+
         string idBook = await _bookService.AddBook(bookAddDto);
         return Ok(idBook);
     }
     
     [HttpGet]
-    public  IActionResult GetAllBooks()
+    public  IActionResult GetAllBooks(int page=1, int pageSize=12)
     {
-        var books =  _bookService.GetAllBooks();
+        var books =  _bookService.GetPaginatedBooks(page, pageSize);
         return Ok(books);
     }
     
