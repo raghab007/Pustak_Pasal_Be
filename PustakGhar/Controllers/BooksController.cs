@@ -1,5 +1,4 @@
 
-using System.Text.Json;
 using AlishPustakGhar.Dtos;
 using AlishPustakGhar.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -35,10 +34,14 @@ public class BooksController: ControllerBase
         return Ok(books);
     }
     
-    [HttpGet("id:Guid")]
-    public  IActionResult GetBook(Guid id)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<BookWithDetailsDto>> GetBook(Guid id)
     {
-        var book =  _bookService.GetBookById(id);
-        return Ok(book);
+        var bookDto = await _bookService.GetBookById(id);
+        if (bookDto == null)
+        {
+            return NotFound();
+        }
+        return Ok(bookDto);
     }
 }

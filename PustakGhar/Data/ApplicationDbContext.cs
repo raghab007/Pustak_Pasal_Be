@@ -19,5 +19,9 @@ namespace WebApplication1.Data
         public DbSet<Author> Authors { get; set; }
         
         public DbSet<Genre> Genres { get; set; }
+        
+       
     }
+    
+    
 }

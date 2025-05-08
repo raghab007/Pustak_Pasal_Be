@@ -1,4 +1,5 @@
 using AlishPustakGhar.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Model;
 
 namespace AlishPustakGhar.Services.Interfaces;
@@ -13,6 +14,6 @@ public interface IBookService
     
     
     
-    Book GetBookById(Guid id);
+    Task<BookWithDetailsDto> GetBookById(Guid id);
     //void UpdateBook(Guid id, )
 }
