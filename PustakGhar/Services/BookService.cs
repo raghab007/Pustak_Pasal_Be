@@ -2,8 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using AlishPustakGhar.Dtos;
 using AlishPustakGhar.Services.Interfaces;
 using AlishPustakGhar.Utils;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Model;
@@ -23,20 +21,7 @@ namespace AlishPustakGhar.Services
             _context = context;
             _fileHelper = fileHelper;
         }
-
-        /// <summary>
-        /// Adds a new book to the database.
-        /// </summary>
-        /// <param name="bookAddDto">The data transfer object containing book details</param>
-        /// <returns>The ID of the newly created book as a string</returns>
-        /// <exception cref="Exception">Thrown when required images are missing</exception>
-
-
-
-
-
-
-
+        
 
         public async Task<string> AddBook(BookAddDto bookAddDto)
         {
@@ -242,7 +227,56 @@ namespace AlishPustakGhar.Services
             return (bookDto);
 
         }
+        public async Task<bool> ApplyBulkDiscount(BulkDiscountDto bulkDiscountDto)
+        {
+            if (bulkDiscountDto == null)
+            {
+                throw new ArgumentNullException(nameof(bulkDiscountDto));
+            }
 
+            if (bulkDiscountDto.StartDate >= bulkDiscountDto.EndDate)
+            {
+                throw new ValidationException("End date must be after start date");
+            }
 
+            if (!bulkDiscountDto.BookIds.Any())
+            {
+                throw new ValidationException("At least one book must be selected");
+            }
+
+            var books = await _context.Books
+                .Where(b => bulkDiscountDto.BookIds.Contains(b.Id))
+                .ToListAsync();
+
+            if (books.Count != bulkDiscountDto.BookIds.Count)
+            {
+                // Some books weren't found - you might want to handle this differently
+                throw new KeyNotFoundException("One or more books could not be found");
+            }
+
+            foreach (var book in books)
+            {
+                book.DiscountPercentage = bulkDiscountDto.DiscountPercentage;
+                book.DiscoundStartDate = bulkDiscountDto.StartDate;
+                book.DiscoundEndDate = bulkDiscountDto.EndDate;
+                book.IsOnSale = bulkDiscountDto.SetOnSale;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the error here
+                throw new Exception("Failed to apply bulk discount", ex);
+            }
+        }
+        
+        
+        
+        
     }
+    
 }

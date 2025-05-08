@@ -41,11 +41,24 @@ namespace WebApplication1.Model
         public  DateTime? DiscoundStartDate { get; set; }
         
         public  DateTime? DiscoundEndDate { get; set; }
+
+        public int DiscountPercentage { get; set; } = 0;
         
         public virtual ICollection<AuthorBook> AuthorBooks { get; set; } = new List<AuthorBook>();
         
         public virtual ICollection<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
         
 
+        public virtual ICollection<CartBook> CartBooks { get; set; } = new List<CartBook>();
+        public bool IsDiscountActive()
+        {
+            if (DiscountPercentage <= 0) return false;
+    
+            var now = DateTime.UtcNow;
+            return DiscoundStartDate.HasValue 
+                   && DiscoundEndDate.HasValue
+                   && now >= DiscoundStartDate.Value
+                   && now <= DiscoundEndDate.Value;
+        }
     }
 }

@@ -44,4 +44,18 @@ public class BooksController: ControllerBase
         }
         return Ok(bookDto);
     }
+    
+    [HttpPost("bulk-discount")]
+    public async Task<IActionResult> ApplyBulkDiscount([FromBody] BulkDiscountDto dto)
+    {
+        try
+        {
+            var result = await _bookService.ApplyBulkDiscount(dto);
+            return Ok(new { Success = result });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

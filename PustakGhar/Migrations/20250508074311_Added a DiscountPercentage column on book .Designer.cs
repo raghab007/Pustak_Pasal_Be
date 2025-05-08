@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApplication1.Data;
@@ -11,9 +12,11 @@ using WebApplication1.Data;
 namespace AlishPustakGhar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508074311_Added a DiscountPercentage column on book ")]
+    partial class AddedaDiscountPercentagecolumnonbook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,26 +24,6 @@ namespace AlishPustakGhar.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("AlishPustakGhar.Models.Cart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Cart");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -308,30 +291,6 @@ namespace AlishPustakGhar.Migrations
                     b.ToTable("BookGenre");
                 });
 
-            modelBuilder.Entity("WebApplication1.Model.CartBook", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CartId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("CartId");
-
-                    b.ToTable("CartBook");
-                });
-
             modelBuilder.Entity("WebApplication1.Model.Genre", b =>
                 {
                     b.Property<Guid>("Id")
@@ -362,9 +321,6 @@ namespace AlishPustakGhar.Migrations
 
                     b.Property<int>("Age")
                         .HasColumnType("integer");
-
-                    b.Property<Guid?>("CartId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -437,17 +393,6 @@ namespace AlishPustakGhar.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("AlishPustakGhar.Models.Cart", b =>
-                {
-                    b.HasOne("WebApplication1.Model.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("AlishPustakGhar.Models.Cart", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -539,30 +484,6 @@ namespace AlishPustakGhar.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("WebApplication1.Model.CartBook", b =>
-                {
-                    b.HasOne("WebApplication1.Model.Book", "Book")
-                        .WithMany("CartBooks")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AlishPustakGhar.Models.Cart", "Cart")
-                        .WithMany("CartBooks")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Cart");
-                });
-
-            modelBuilder.Entity("AlishPustakGhar.Models.Cart", b =>
-                {
-                    b.Navigation("CartBooks");
-                });
-
             modelBuilder.Entity("WebApplication1.Model.Author", b =>
                 {
                     b.Navigation("AuthorBooks");
@@ -573,19 +494,11 @@ namespace AlishPustakGhar.Migrations
                     b.Navigation("AuthorBooks");
 
                     b.Navigation("BookGenres");
-
-                    b.Navigation("CartBooks");
                 });
 
             modelBuilder.Entity("WebApplication1.Model.Genre", b =>
                 {
                     b.Navigation("BookGenres");
-                });
-
-            modelBuilder.Entity("WebApplication1.Model.User", b =>
-                {
-                    b.Navigation("Cart")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

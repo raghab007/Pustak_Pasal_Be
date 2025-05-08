@@ -16,4 +16,6 @@ public interface IBookService
     
     Task<BookWithDetailsDto> GetBookById(Guid id);
     //void UpdateBook(Guid id, )
+    
+    Task<bool> ApplyBulkDiscount(BulkDiscountDto bulkDiscountDto);
 }
