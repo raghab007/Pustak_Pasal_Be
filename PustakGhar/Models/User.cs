@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using AlishPustakGhar.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace WebApplication1.Model
+namespace AlishPustakGhar.Model
 {
     public class User : IdentityUser<Guid>
     {

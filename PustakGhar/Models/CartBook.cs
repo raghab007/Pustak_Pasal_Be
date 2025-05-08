@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using AlishPustakGhar.Models;
 
-namespace WebApplication1.Model;
+namespace AlishPustakGhar.Model;
 
 public class CartBook
 {

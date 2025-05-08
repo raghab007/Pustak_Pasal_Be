@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using AlishPustakGhar.Data;
 using AlishPustakGhar.Dtos;
+using AlishPustakGhar.Model;
 using AlishPustakGhar.Services.Interfaces;
 using AlishPustakGhar.Utils;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
-using WebApplication1.Model;
 
 namespace AlishPustakGhar.Services
 {
@@ -47,7 +47,7 @@ namespace AlishPustakGhar.Services
                 backFileName = await _fileHelper.SaveFile(bookAddDto.BackImage, "Books");
 
                 // Create new book
-                var book = new Book
+                var book = new Book()
                 {
                     Title = bookAddDto.Title,
                     ISBN = bookAddDto.ISBN,
@@ -275,7 +275,84 @@ namespace AlishPustakGhar.Services
         }
         
         
-        
+        // Add these methods to your BookService class
+
+public async Task<BookResponseDto> SearchBooksByTitle(string title, int page = 1, int pageSize = 12)
+{
+    if (string.IsNullOrWhiteSpace(title))
+    {
+        throw new ArgumentException("Title cannot be empty", nameof(title));
+    }
+
+    var query = _context.Books
+        .Where(b => b.Title.Contains(title))
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+public async Task<BookResponseDto> GetBooksByGenre(Guid genreId, int page = 1, int pageSize = 12)
+{
+    var genreExists = await _context.Genres.AnyAsync(g => g.Id == genreId);
+    if (!genreExists)
+    {
+        throw new KeyNotFoundException("Genre not found");
+    }
+
+    var query = _context.Books
+        .Where(b => b.BookGenres.Any(bg => bg.GenreId == genreId))
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+// Also add this method if you want to get books by genre name (type)
+public async Task<BookResponseDto> GetBooksByGenreType(string genreType, int page = 1, int pageSize = 12)
+{
+    if (string.IsNullOrWhiteSpace(genreType))
+    {
+        throw new ArgumentException("Genre type cannot be empty", nameof(genreType));
+    }
+
+    var normalizedGenreType = genreType.Trim().ToLowerInvariant();
+
+    var query = _context.Books
+        .Where(b => b.BookGenres.Any(bg => 
+            bg.Genre.GenreType.ToLower() == normalizedGenreType))
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
         
     }
     

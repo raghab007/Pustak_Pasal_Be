@@ -1,9 +1,10 @@
+using AlishPustakGhar.Model;
+using AlishPustakGhar.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Model;
 
-namespace WebApplication1.Data
+namespace AlishPustakGhar.Data
 {
     public class ApplicationDbContext :IdentityDbContext<User,IdentityRole<Guid>,Guid>
     {
@@ -20,7 +21,9 @@ namespace WebApplication1.Data
         
         public DbSet<Genre> Genres { get; set; }
         
+       public DbSet<Cart> Carts { get; set; }
        
+       public DbSet<CartBook> CartBooks { get; set; }
     }
     
     

@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using AlishPustakGhar.Data;
+using AlishPustakGhar.Model;
 using AlishPustakGhar.Services;
 using AlishPustakGhar.Services.Interfaces;
 using AlishPustakGhar.Utils;
@@ -7,9 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WebApplication1.Data;
-using WebApplication1.Enums;
-using WebApplication1.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +71,8 @@ builder.Services.AddSingleton<JwtHelper, JwtHelper>();
 builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddSingleton<FileHelper, FileHelper>();
+
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Configure Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();

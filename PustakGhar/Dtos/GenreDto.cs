@@ -1,6 +1,5 @@
 
 using System.ComponentModel.DataAnnotations;
-using WebApplication1.Enums;
 
 namespace AlishPustakGhar.Dtos;
 

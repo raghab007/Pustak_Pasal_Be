@@ -5,7 +5,7 @@
 namespace AlishPustakGhar.Migrations
 {
     /// <inheritdoc />
-    public partial class AddGenreentity : Migration
+    public partial class Addedentiesfromthestartv2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

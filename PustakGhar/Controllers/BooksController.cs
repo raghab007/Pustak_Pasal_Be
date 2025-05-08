@@ -19,7 +19,7 @@ public class BooksController: ControllerBase
     }
     
     [HttpPost]
-    [Consumes("multipart/form-data")]
+    //[Consumes("multipart/form-data")]
     public async Task<IActionResult> AddBook([FromForm] BookAddDto bookAddDto  )
     {
 
@@ -56,6 +56,61 @@ public class BooksController: ControllerBase
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
+        }
+    }
+    
+    
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchBooks([FromQuery] string title, [FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+    {
+        try
+        {
+            var result = await _bookService.SearchBooksByTitle(title, page, pageSize);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet("by-genre/{genreId}")]
+    public async Task<IActionResult> GetBooksByGenre(Guid genreId, [FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+    {
+        try
+        {
+            var result = await _bookService.GetBooksByGenre(genreId, page, pageSize);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet("by-genre-type")]
+    public async Task<IActionResult> GetBooksByGenreType([FromQuery] string genreType, [FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+    {
+        try
+        {
+            var result = await _bookService.GetBooksByGenreType(genreType, page, pageSize);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
     }
 }

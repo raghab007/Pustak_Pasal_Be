@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlishPustakGhar.Migrations
 {
     /// <inheritdoc />
-    public partial class updatebookagain : Migration
+    public partial class Addedentiesfromthestart : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,6 +38,7 @@ namespace AlishPustakGhar.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     Age = table.Column<int>(type: "integer", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
+                    CartId = table.Column<Guid>(type: "uuid", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -65,7 +66,6 @@ namespace AlishPustakGhar.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Bio = table.Column<string>(type: "text", nullable: false),
-                    ImageURL = table.Column<string>(type: "text", nullable: false),
                     RegisteredDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -94,7 +94,8 @@ namespace AlishPustakGhar.Migrations
                     IsOnSale = table.Column<bool>(type: "boolean", nullable: false),
                     IsBestSeller = table.Column<bool>(type: "boolean", nullable: false),
                     DiscoundStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DiscoundEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    DiscoundEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DiscountPercentage = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,7 +107,7 @@ namespace AlishPustakGhar.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GenreType = table.Column<int>(type: "integer", nullable: false)
+                    GenreType = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,6 +221,25 @@ namespace AlishPustakGhar.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AuthorBook",
                 columns: table => new
                 {
@@ -265,6 +285,32 @@ namespace AlishPustakGhar.Migrations
                         name: "FK_BookGenre_Genre_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genre",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartBooks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CartId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartBooks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartBooks_Book_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Book",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartBooks_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -325,6 +371,22 @@ namespace AlishPustakGhar.Migrations
                 name: "IX_BookGenre_GenreId",
                 table: "BookGenre",
                 column: "GenreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartBooks_BookId",
+                table: "CartBooks",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartBooks_CartId",
+                table: "CartBooks",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_UserId",
+                table: "Carts",
+                column: "UserId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -352,19 +414,25 @@ namespace AlishPustakGhar.Migrations
                 name: "BookGenre");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "CartBooks");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Author");
 
             migrationBuilder.DropTable(
+                name: "Genre");
+
+            migrationBuilder.DropTable(
                 name: "Book");
 
             migrationBuilder.DropTable(
-                name: "Genre");
+                name: "Carts");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

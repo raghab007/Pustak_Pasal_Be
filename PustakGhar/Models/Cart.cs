@@ -1,6 +1,6 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
-using WebApplication1.Model;
+using AlishPustakGhar.Model;
 
 namespace AlishPustakGhar.Models;
 
