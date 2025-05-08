@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using AlishPustakGhar.Services;
 using AlishPustakGhar.Services.Interfaces;
 using AlishPustakGhar.Utils;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Data;
+using WebApplication1.Enums;
 using WebApplication1.Model;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +59,11 @@ builder.Services.AddCors(options =>
 });
 
 //builder.Services.AddIdentityApiEndpoints<User>();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
     
 
 // the scope may be change later to transient or scope

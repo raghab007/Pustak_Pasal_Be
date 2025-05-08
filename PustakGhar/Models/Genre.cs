@@ -12,7 +12,7 @@ namespace WebApplication1.Model
 
         [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-        public GenreType GenreType { get; set; }
+        public string GenreType { get; set; }
         
         
         public ICollection<BookGenre> BookGenres { get; set; } = new List<BookGenre>();

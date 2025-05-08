@@ -41,6 +41,7 @@ public class BookAddDto
     [Required]
     public IFormFile BackImage { get; set; }
     
-    public List<AuthorDto> Authors { get; set; }  = new List<AuthorDto>();
+    public List<AuthorDto> Authors { get; set; } = new List<AuthorDto>();
+    
+    public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
 }
-
