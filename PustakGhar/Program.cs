@@ -62,6 +62,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
     
 
@@ -73,6 +74,7 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddSingleton<FileHelper, FileHelper>();
 
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IFavouritesService, FavouritesService>();
 
 // Configure Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();

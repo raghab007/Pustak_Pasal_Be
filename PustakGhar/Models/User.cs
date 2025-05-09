@@ -27,5 +27,8 @@ namespace AlishPustakGhar.Model
         
         public Guid? CartId { get; set; }
         public virtual Cart Cart { get; set; }
+        
+        public virtual ICollection<Favourites> Favourites { get; set; } = new List<Favourites>();
+        
     }
 }

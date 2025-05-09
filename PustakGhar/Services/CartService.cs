@@ -10,9 +10,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-
-
-
 public class CartService : ICartService
 {
     private readonly ApplicationDbContext _context;
@@ -25,7 +22,7 @@ public class CartService : ICartService
     public async Task<Cart> GetUserCartAsync(Guid userId)
     {
         var cart = await _context.Carts
-            .Include(c => c.CartBooks)
+            .Include(c => c.CartItems)
             .ThenInclude(cb => cb.Book)
             .FirstOrDefaultAsync(c => c.UserId == userId);
 
@@ -35,7 +32,7 @@ public class CartService : ICartService
             cart = new Cart
             {
                 UserId = userId,
-                CartBooks = new List<CartBook>()
+                CartItems = new List<CartItem>()
             };
             _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
@@ -63,10 +60,25 @@ public class CartService : ICartService
             throw new InvalidOperationException("Book is not available in the requested quantity");
         }
 
-        var cart = await GetUserCartAsync(userId);
+        var cart = await _context.Carts
+            .Include(c => c.CartItems)
+            .FirstOrDefaultAsync(c => c.UserId == userId);
+
+        if (cart == null)
+        {
+            cart = new Cart
+            {
+                UserId = userId,
+                CartItems = new List<CartItem>()
+            };
+            _context.Carts.Add(cart);
+            await _context.SaveChangesAsync();
+        }
 
         // Check if book already exists in cart
-        var existingCartItem = cart.CartBooks.FirstOrDefault(cb => cb.BookId == bookId);
+        var existingCartItem = await _context.CartItems
+            .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && ci.BookId == bookId);
+
         if (existingCartItem != null)
         {
             // Update existing item's quantity
@@ -81,13 +93,13 @@ public class CartService : ICartService
         else
         {
             // Add new item to cart
-            var cartBook = new CartBook
+            var cartItem = new CartItem
             {
                 BookId = bookId,
                 Quantity = quantity,
                 CartId = cart.Id
             };
-            cart.CartBooks.Add(cartBook);
+            _context.CartItems.Add(cartItem);
         }
 
         await _context.SaveChangesAsync();
@@ -112,7 +124,7 @@ public class CartService : ICartService
         }
 
         var cart = await GetUserCartAsync(userId);
-        var cartItem = cart.CartBooks.FirstOrDefault(cb => cb.BookId == bookId);
+        var cartItem = cart.CartItems.FirstOrDefault(cb => cb.BookId == bookId);
 
         if (cartItem == null)
         {
@@ -126,11 +138,11 @@ public class CartService : ICartService
     public async Task RemoveFromCartAsync(Guid userId, Guid bookId)
     {
         var cart = await GetUserCartAsync(userId);
-        var cartItem = cart.CartBooks.FirstOrDefault(cb => cb.BookId == bookId);
+        var cartItem = cart.CartItems.FirstOrDefault(cb => cb.BookId == bookId);
 
         if (cartItem != null)
         {
-            cart.CartBooks.Remove(cartItem);
+            cart.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
         }
     }
@@ -138,7 +150,7 @@ public class CartService : ICartService
     public async Task ClearCartAsync(Guid userId)
     {
         var cart = await GetUserCartAsync(userId);
-        cart.CartBooks.Clear();
+        cart.CartItems.Clear();
         await _context.SaveChangesAsync();
     }
 }

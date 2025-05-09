@@ -104,7 +104,7 @@ public class AuthController : ControllerBase
             new(ClaimTypes.Name, user.UserName),
             new(ClaimTypes.Email, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
 
         var token = _jwtHelper.GeToken(authClaims);

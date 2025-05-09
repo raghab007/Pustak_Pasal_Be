@@ -1,5 +1,7 @@
 using AlishPustakGhar.Models;
+
 namespace AlishPustakGhar.Services.Interfaces;
+
 public interface ICartService
 {
     Task<Cart> GetUserCartAsync(Guid userId);

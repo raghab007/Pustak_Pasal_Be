@@ -3,6 +3,7 @@ using System;
 using AlishPustakGhar.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlishPustakGhar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250509081635_Add Favourites entity v2")]
+    partial class AddFavouritesentityv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,7 +161,7 @@ namespace AlishPustakGhar.Migrations
                     b.ToTable("BookGenre");
                 });
 
-            modelBuilder.Entity("AlishPustakGhar.Model.CartItem", b =>
+            modelBuilder.Entity("AlishPustakGhar.Model.CartBook", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,7 +182,7 @@ namespace AlishPustakGhar.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartBooks");
                 });
 
             modelBuilder.Entity("AlishPustakGhar.Model.Genre", b =>
@@ -501,16 +504,16 @@ namespace AlishPustakGhar.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("AlishPustakGhar.Model.CartItem", b =>
+            modelBuilder.Entity("AlishPustakGhar.Model.CartBook", b =>
                 {
                     b.HasOne("AlishPustakGhar.Model.Book", "Book")
-                        .WithMany("CartItems")
+                        .WithMany("CartBooks")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AlishPustakGhar.Models.Cart", "Cart")
-                        .WithMany("CartItems")
+                        .WithMany("CartBooks")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -612,7 +615,7 @@ namespace AlishPustakGhar.Migrations
 
                     b.Navigation("BookGenres");
 
-                    b.Navigation("CartItems");
+                    b.Navigation("CartBooks");
 
                     b.Navigation("Favourites");
                 });
@@ -632,7 +635,7 @@ namespace AlishPustakGhar.Migrations
 
             modelBuilder.Entity("AlishPustakGhar.Models.Cart", b =>
                 {
-                    b.Navigation("CartItems");
+                    b.Navigation("CartBooks");
                 });
 #pragma warning restore 612, 618
         }

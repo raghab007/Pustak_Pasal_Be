@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AlishPustakGhar.Models;
 
 namespace AlishPustakGhar.Model
 {
@@ -49,7 +50,10 @@ namespace AlishPustakGhar.Model
         public virtual ICollection<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
         
 
-        public virtual ICollection<CartBook> CartBooks { get; set; } = new List<CartBook>();
+        public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+        
+        
+        public virtual ICollection<Favourites> Favourites { get; set; } = new List<Favourites>();
         public bool IsDiscountActive()
         {
             if (DiscountPercentage <= 0) return false;

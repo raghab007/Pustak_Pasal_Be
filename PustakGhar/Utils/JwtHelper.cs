@@ -22,7 +22,7 @@ public class JwtHelper
             issuer: _configuration["JwtSettings:Issuer"],
             audience: _configuration["JwtSettings:Audience"],
             claims: authClaims,
-            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireMinutes"])),
+            expires: DateTime.Now.AddHours(3), // Set expiration time here (e.g., 3 hours)
             signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256)
         );
         return token;

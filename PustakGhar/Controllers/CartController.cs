@@ -1,8 +1,6 @@
 using AlishPustakGhar.Dtos;
 using AlishPustakGhar.Model;
 using Microsoft.AspNetCore.Mvc;
-
-
 using AlishPustakGhar.Models;
 using AlishPustakGhar.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +20,7 @@ namespace AlishPustakGhar.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Cart>>> GetCart()
+        public async Task<ActionResult<Cart>> GetCart()
         {
             var userId = GetCurrentUserId();
             var cart = await _cartService.GetUserCartAsync(userId);
@@ -100,12 +98,7 @@ namespace AlishPustakGhar.Controllers
 
         private Guid GetCurrentUserId()
         {
-            // Implement your logic to get current user ID
-            // This might come from claims or other authentication context
             return Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
         }
     }
-    
-
-   
 }

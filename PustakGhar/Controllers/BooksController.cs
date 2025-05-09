@@ -10,7 +10,6 @@ namespace AlishPustakGhar.Controllers;
 [Route("api/[controller]")]
 public class BooksController: ControllerBase
 {
-    
     IBookService _bookService;
     
     public BooksController(IBookService bookService)
