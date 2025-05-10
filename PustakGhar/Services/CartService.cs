@@ -18,6 +18,17 @@ public class CartService : ICartService
     {
         _context = context;
     }
+    
+    
+    public async Task<List<CartItem>> GetCartItems(Guid userId)
+    {
+        var cart = await _context.Carts
+            .Include(c => c.CartItems)
+            .ThenInclude(ci => ci.Book)
+            .FirstOrDefaultAsync(c => c.UserId == userId);
+
+        return cart?.CartItems.ToList() ?? new List<CartItem>();
+    }
 
     public async Task<Cart> GetUserCartAsync(Guid userId)
     {

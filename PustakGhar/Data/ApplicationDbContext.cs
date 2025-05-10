@@ -26,6 +26,12 @@ namespace AlishPustakGhar.Data
        public DbSet<CartItem> CartItems { get; set; }
        
        public DbSet<Favourites> Favourites { get; set; }
+       
+       public DbSet<Order> Orders { get; set; }
+       
+       public DbSet<OrderItem> OrderItems { get; set; }
+       
+       
     }
     
     

@@ -76,6 +76,10 @@ builder.Services.AddSingleton<FileHelper, FileHelper>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IFavouritesService, FavouritesService>();
 
+
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 // Configure Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
