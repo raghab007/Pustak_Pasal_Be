@@ -162,11 +162,7 @@ namespace AlishPustakGhar.Services
             }
         }
 
-
-        public void DeleteBook(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public BookResponseDto GetPaginatedBooks(int page = 1, int pageSize = 12)
         {
@@ -352,8 +348,306 @@ public async Task<BookResponseDto> GetBooksByGenreType(string genreType, int pag
         Books = books.Select(book => new BookViewDto(book)).ToList(),
         TotalCount = totalCount
     };
-}
+    }
+
+
+// Add to BookService.cs
+
+public async Task<bool> DeleteBook(Guid id)
+{
+    var book = await _context.Books
+        .Include(b => b.AuthorBooks)
+        .Include(b => b.BookGenres)
+        .FirstOrDefaultAsync(b => b.Id == id);
+
+    if (book == null)
+    {
+        return false;
+    }
+
+    try
+    {
+        // Delete associated images
+        if (!string.IsNullOrEmpty(book.FrontImage))
+        {
+            _fileHelper.DeleteFile(book.FrontImage, "Books");
+        }
         
+        if (!string.IsNullOrEmpty(book.BackImage))
+        {
+            _fileHelper.DeleteFile(book.BackImage, "Books");
+        }
+
+        // Remove the book
+        _context.Books.Remove(book);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        // Log error
+        throw new Exception("Error deleting book", ex);
+    }
+}
+
+public async Task<bool> UpdateBook(Guid id, BookUpdateDto bookUpdateDto)
+{
+    var book = await _context.Books
+        .Include(b => b.AuthorBooks)
+        .Include(b => b.BookGenres)
+        .FirstOrDefaultAsync(b => b.Id == id);
+
+    if (book == null)
+    {
+        return false;
+    }
+
+    try
+    {
+        // Update basic properties
+        book.Title = bookUpdateDto.Title ?? book.Title;
+        book.ISBN = bookUpdateDto.ISBN ?? book.ISBN;
+        book.Description = bookUpdateDto.Description ?? book.Description;
+        book.Price = bookUpdateDto.Price ?? book.Price;
+        book.Stock = bookUpdateDto.Stock ?? book.Stock;
+        book.PublishedDate = bookUpdateDto.PublishedDate ?? book.PublishedDate;
+        book.Publisher = bookUpdateDto.Publisher ?? book.Publisher;
+        book.ReleaseStatus = bookUpdateDto.ReleaseStatus ?? book.ReleaseStatus;
+        book.IsOnSale = bookUpdateDto.IsOnSale ?? book.IsOnSale;
+        book.IsBestSeller = bookUpdateDto.IsBestSeller ?? book.IsBestSeller;
+        book.DiscoundStartDate = bookUpdateDto.DiscountStartDate ?? book.DiscoundStartDate;
+        book.DiscoundEndDate = bookUpdateDto.DiscountEndDate ?? book.DiscoundEndDate;
+        book.DiscountPercentage = bookUpdateDto.DiscountPercentage ?? book.DiscountPercentage;
+
+        // Handle image updates
+        if (bookUpdateDto.FrontImage != null)
+        {
+            var newFrontImage = await _fileHelper.SaveFile(bookUpdateDto.FrontImage, "Books");
+            _fileHelper.DeleteFile(book.FrontImage, "Books");
+            book.FrontImage = newFrontImage;
+        }
+
+        if (bookUpdateDto.BackImage != null)
+        {
+            var newBackImage = await _fileHelper.SaveFile(bookUpdateDto.BackImage, "Books");
+            _fileHelper.DeleteFile(book.BackImage, "Books");
+            book.BackImage = newBackImage;
+        }
+
+        // Update authors if provided
+        if (bookUpdateDto.Authors != null)
+        {
+            // Remove existing authors not in the update list
+            var authorsToRemove = book.AuthorBooks
+                .Where(ab => !bookUpdateDto.Authors.Any(a => a.Id == ab.AuthorId))
+                .ToList();
+
+            foreach (var author in authorsToRemove)
+            {
+                book.AuthorBooks.Remove(author);
+            }
+
+            // Add or update authors
+            foreach (var authorDto in bookUpdateDto.Authors)
+            {
+                var existingAuthorBook = book.AuthorBooks.FirstOrDefault(ab => ab.AuthorId == authorDto.Id);
+                
+                if (existingAuthorBook == null)
+                {
+                    var author = await _context.Authors.FindAsync(authorDto.Id);
+                    if (author != null)
+                    {
+                        book.AuthorBooks.Add(new AuthorBook
+                        {
+                            AuthorId = author.Id,
+                            BookId = book.Id
+                        });
+                    }
+                }
+            }
+        }
+
+        // Update genres if provided
+        if (bookUpdateDto.Genres != null)
+        {
+            // Remove existing genres not in the update list
+            var genresToRemove = book.BookGenres
+                .Where(bg => !bookUpdateDto.Genres.Any(g => g.Id == bg.GenreId))
+                .ToList();
+
+            foreach (var genre in genresToRemove)
+            {
+                book.BookGenres.Remove(genre);
+            }
+
+            // Add or update genres
+            foreach (var genreDto in bookUpdateDto.Genres)
+            {
+                var existingBookGenre = book.BookGenres.FirstOrDefault(bg => bg.GenreId == genreDto.Id);
+                
+                if (existingBookGenre == null)
+                {
+                    var genre = await _context.Genres.FindAsync(genreDto.Id);
+                    if (genre != null)
+                    {
+                        book.BookGenres.Add(new BookGenre
+                        {
+                            GenreId = genre.Id,
+                            BookId = book.Id
+                        });
+                    }
+                }
+            }
+        }
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        // Log error
+        throw new Exception("Error updating book", ex);
+    }
+}
+
+public async Task<BookResponseDto> GetComingSoonBooks(int page = 1, int pageSize = 12)
+{
+    var query = _context.Books
+        .Where(b => b.ReleaseStatus == "Coming Soon")
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+public async Task<BookResponseDto> GetBooksOnSale(int page = 1, int pageSize = 12)
+{
+    var now = DateTime.UtcNow;
+    
+    var query = _context.Books
+        .Where(b => b.IsOnSale && 
+                    b.DiscoundStartDate <= now && 
+                    b.DiscoundEndDate >= now)
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+public async Task<BookResponseDto> GetBestSellers(int page = 1, int pageSize = 12)
+{
+    var query = _context.Books
+        .Where(b => b.IsBestSeller)
+        .OrderByDescending(b => b.TotalSold)
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+public async Task<BookResponseDto> GetNewReleases(int page = 1, int pageSize = 12)
+{
+    var threeMonthsAgo = DateTime.UtcNow.AddMonths(-3);
+    
+    var query = _context.Books
+        .Where(b => b.PublishedDate >= threeMonthsAgo)
+        .OrderByDescending(b => b.PublishedDate)
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+public async Task<BookResponseDto> GetNewArrivals(int page = 1, int pageSize = 12)
+{
+    var oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
+    
+    var query = _context.Books
+        .Where(b => b.PublishedDate >= oneMonthAgo)
+        .OrderByDescending(b => b.PublishedDate)
+        .AsQueryable();
+
+    var totalCount = await query.CountAsync();
+    var books = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new BookResponseDto
+    {
+        Books = books.Select(book => new BookViewDto(book)).ToList(),
+        TotalCount = totalCount
+    };
+}
+
+
+
+public async Task<List<PurchasedBookDto>> GetPurchasedBooks(Guid userId)
+{
+    return await _context.Orders
+        .Where(o => o.UserId == userId && o.OrderStatus == "Delivered")
+        .Include(o => o.OrderItems)
+        .ThenInclude(oi => oi.Book)
+        .ThenInclude(b => b.Reviews)
+        .SelectMany(o => o.OrderItems.Select(oi => oi.Book))
+        .Distinct()
+        .Select(b => new PurchasedBookDto
+        {
+            Id = b.Id,
+            Title = b.Title,
+            ISBN = b.ISBN,
+            Price = b.Price,
+            FrontImage = b.FrontImage,
+            UserReview = b.Reviews
+                .Where(r => r.UserId == userId)
+                .Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt
+                })
+                .FirstOrDefault()
+        })
+        .ToListAsync();
+}
+
     }
     
 }

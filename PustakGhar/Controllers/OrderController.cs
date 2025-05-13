@@ -1,5 +1,3 @@
-
-
 using AlishPustakGhar.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +11,14 @@ namespace AlishPustakGhar.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly ICartService _cartService;
+        private readonly IBookService _bookService;
 
-        public OrdersController(IOrderService orderService, ICartService cartService)
+        public OrdersController(IOrderService orderService, ICartService cartService, IBookService bookService)
         {
             _orderService = orderService;
             _cartService = cartService;
+            _bookService = bookService;
+            
         }
 
         [HttpPost]
@@ -94,7 +95,15 @@ namespace AlishPustakGhar.Controllers
             var orders = await _orderService.GetUserOrders(userId);
             return Ok(orders);
         }
-        
+
+        [HttpGet("purchased-books")]
+        public async Task<IActionResult> GetPurchasedBooks()
+        {
+            var userId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            
+            var books = await _bookService.GetPurchasedBooks(userId);
+            return Ok(books);
+        }
         
         [AllowAnonymous]
         [HttpGet("claim/{claimCode}")]

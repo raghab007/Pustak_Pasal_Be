@@ -24,7 +24,14 @@ public class BookViewDto
     public bool IsOnSale { get; set; }
     
     public string FrontImage { get; set; }
+    
+    public DateTime? DiscountStartDateTime { get; set; }
+    
+    public DateTime ? DiscountEndDateTime{ get; set; }
+    
+   
 
+    
 
     public BookViewDto(Book book)
     {
@@ -39,6 +46,8 @@ public class BookViewDto
         ReleaseStatus = book.ReleaseStatus;
         IsOnSale = book.IsOnSale;
         FrontImage = book.FrontImage;
+        DiscountEndDateTime = book.DiscoundEndDate;
+        DiscountStartDateTime = book.DiscoundStartDate;
     }
 
 }

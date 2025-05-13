@@ -54,6 +54,8 @@ namespace AlishPustakGhar.Model
         
         
         public virtual ICollection<Favourites> Favourites { get; set; } = new List<Favourites>();
+        
+        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
         public bool IsDiscountActive()
         {
             if (DiscountPercentage <= 0) return false;

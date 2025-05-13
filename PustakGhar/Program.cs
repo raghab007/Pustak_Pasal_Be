@@ -80,6 +80,8 @@ builder.Services.AddScoped<IFavouritesService, FavouritesService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+builder.Services.AddScoped<IReviewService, ReviewService>();
+
 // Configure Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -112,4 +112,121 @@ public class BooksController: ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+    
+    
+    
+    
+    
+    // Add to BooksController.cs
+
+[HttpDelete("{id}")]
+public async Task<IActionResult> DeleteBook(Guid id)
+{
+    try
+    {
+        var result = await _bookService.DeleteBook(id);
+        if (!result)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateBook(Guid id, [FromForm] BookUpdateDto bookUpdateDto)
+{
+    try
+    {
+        var result = await _bookService.UpdateBook(id, bookUpdateDto);
+        if (!result)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+[HttpGet("coming-soon")]
+public async Task<IActionResult> GetComingSoonBooks([FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+{
+    try
+    {
+        var result = await _bookService.GetComingSoonBooks(page, pageSize);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+[HttpGet("on-sale")]
+public async Task<IActionResult> GetBooksOnSale([FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+{
+    try
+    {
+        var result = await _bookService.GetBooksOnSale(page, pageSize);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+[HttpGet("best-sellers")]
+public async Task<IActionResult> GetBestSellers([FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+{
+    try
+    {
+        var result = await _bookService.GetBestSellers(page, pageSize);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+[HttpGet("new-releases")]
+public async Task<IActionResult> GetNewReleases([FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+{
+    try
+    {
+        var result = await _bookService.GetNewReleases(page, pageSize);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
+[HttpGet("new-arrivals")]
+public async Task<IActionResult> GetNewArrivals([FromQuery] int page = 1, [FromQuery] int pageSize = 12)
+{
+    try
+    {
+        var result = await _bookService.GetNewArrivals(page, pageSize);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+    
+    
+    
+    
+    
 }

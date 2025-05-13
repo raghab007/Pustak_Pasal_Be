@@ -31,7 +31,7 @@ namespace AlishPustakGhar.Data
        
        public DbSet<OrderItem> OrderItems { get; set; }
        
-       
+       public DbSet<Review> Reviews { get; set; }
     }
     
     

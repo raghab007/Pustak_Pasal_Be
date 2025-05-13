@@ -253,9 +253,16 @@ namespace AlishPustakGhar.Services
             }).ToList();
         }
 
-        
-        
-
+        public async Task<List<Book>> GetPurchasedBooks(Guid userId)
+        {
+            return await _context.Orders
+                .Where(o => o.UserId == userId && o.OrderStatus == "Delivered")
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Book)
+                .SelectMany(o => o.OrderItems.Select(oi => oi.Book))
+                .Distinct()
+                .ToListAsync();
+        }
     }
     
 }

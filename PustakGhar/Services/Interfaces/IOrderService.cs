@@ -18,7 +18,5 @@ public interface IOrderService
 
     public  Task<List<ClaimCodeDetailsDto>> GetAllOrdersWithUserDetails();
 
-
-
-
+    Task<List<Book>> GetPurchasedBooks(Guid userId);
 }
